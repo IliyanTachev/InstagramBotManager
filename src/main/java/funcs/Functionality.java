@@ -4,23 +4,25 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Functionality {
-    protected static WebDriver driver = new ChromeDriver();
+    protected static WebDriver driver;
     private static final String SITE_URL = "https://instagram.com";
     private static final String CREDENTIALS_FILE = "./src/main/resources/credentials";
     static{
         String driverPath;
         String os = System.getProperty("os.name");
         if(os.equals("Mac OS X")) driverPath = "./chromedriver";
-        else driverPath = "./chromedriver.exe"; // windows
+        else driverPath = "chromedriver.exe"; // windows
 
         System.setProperty("webdriver.chrome.driver", driverPath);
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--lang=en");
+        driver = new ChromeDriver(options);
     }
 
     public static void navigateTo(String url){
