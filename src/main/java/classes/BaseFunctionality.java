@@ -1,4 +1,4 @@
-package funcs;
+package classes;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -9,7 +9,7 @@ import org.openqa.selenium.chrome.ChromeOptions;
 import java.io.FileNotFoundException;
 import java.util.concurrent.TimeUnit;
 
-public abstract class Functionality {
+public abstract class BaseFunctionality {
     protected static WebDriver driver;
     private static final String SITE_URL = "https://instagram.com";
     private static final String CREDENTIALS_FILE = "./src/main/resources/credentials";
@@ -25,7 +25,7 @@ public abstract class Functionality {
         driver = new ChromeDriver(options);
     }
 
-    public static void navigateTo(String url){
+    public static void navigateToURL(String url){
         driver.navigate().to(url); // go to instagram
         WebElement acceptBtn = driver.findElement(By.cssSelector(".aOOlW.bIiDR"));
         acceptBtn.click(); // accept cookies
@@ -33,8 +33,8 @@ public abstract class Functionality {
     }
 
     public static void loginToIG(String accountName) throws FileNotFoundException { // String username, String password
-        navigateTo(SITE_URL);
-        FileController fileController = new FileController(CREDENTIALS_FILE);
+        navigateToURL(SITE_URL);
+        FileReader fileController = new FileReader(CREDENTIALS_FILE);
         Account account = fileController.getAccountByName(accountName);
 
         WebElement usernameInput = driver.findElement(By.cssSelector("[name=\"username\"]"));
@@ -46,4 +46,6 @@ public abstract class Functionality {
         driver.findElement(By.xpath("//button[text()='Not Now']")).click(); // save your login info decline
         driver.findElement(By.xpath("//button[text()='Not Now']")).click(); // notifications decline
     }
+
+
 }

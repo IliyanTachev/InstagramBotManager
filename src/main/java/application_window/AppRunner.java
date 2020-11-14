@@ -1,12 +1,18 @@
-import funcs.FTF;
-import funcs.Functionality;
+package application_window;
+
+import functionalities.FTF;
+import classes.BaseFunctionality;
 
 import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.Scanner;
 
-public class Main {
+public class AppRunner {
     public static void main(String[] args) throws InterruptedException, FileNotFoundException {
+//        executeFTF();
+    }
+
+    private static void executeFTF() throws FileNotFoundException {
         FTF FTF = new FTF("phoneprincipal");
         Map<String, String> result = FTF.getCategoriesByHashtag("#caseiphone");
 
@@ -17,7 +23,7 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
         System.out.print("Select category: ");
         String category = "#" + scanner.next();
-        Functionality.navigateTo(result.get(category));
-
+        BaseFunctionality.navigateToURL(result.get(category));
     }
+
 }

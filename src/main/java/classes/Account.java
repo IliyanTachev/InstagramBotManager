@@ -1,4 +1,4 @@
-package funcs;
+package classes;
 
 public class Account {
     private String name;

@@ -1,4 +1,6 @@
-package funcs;
+package classes;
+
+import classes.Account;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -7,10 +9,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-public class FileController {
+public class FileReader {
     private final File file;
 
-    public FileController(String filename){
+    public FileReader(String filename){
         file = new File(filename);
     }
 

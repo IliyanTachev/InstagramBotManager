@@ -1,5 +1,6 @@
-package funcs;
+package functionalities;
 
+import classes.BaseFunctionality;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FTF extends Functionality{
+public class FTF extends BaseFunctionality {
     public FTF(String accountName) throws FileNotFoundException {
         loginToIG(accountName);
     }
@@ -22,4 +23,6 @@ public class FTF extends Functionality{
         for(int i=0;i<categoryLinks.size();i++) categories.put(categoryNames.get(i), categoryLinks.get(i));
         return categories;
     }
+
+
 }
