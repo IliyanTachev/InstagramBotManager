@@ -12,7 +12,7 @@ public class GUI{
     public static JFrame createWindow() {
         JFrame frame = new JFrame("Instagram Manager Bot");
         frame.setSize(500, 465);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(null);
         return frame;
     }
@@ -29,11 +29,6 @@ public class GUI{
     }
 
     static class Action implements ActionListener {
-
-        public Action() {
-
-        }
-
         public void actionPerformed (ActionEvent e){
             try {
                 executeFTF();
