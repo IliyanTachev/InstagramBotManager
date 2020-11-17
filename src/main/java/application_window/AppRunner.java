@@ -11,13 +11,9 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class AppRunner {
-    public static void main(String[] args) throws InterruptedException, FileNotFoundException {
-        JFrame window = GUI.createWindow();
-        JButton button = GUI.createButton("Follow for Follow");
-        window.add(button);
-        button.addActionListener(new GUI.Action());
-        window.setVisible(true);
-
+    public static void main(String[] args){
+        GUI app = new GUI();
+        app.constructApplication();
     }
 
     public static void executeFTF() throws FileNotFoundException {
