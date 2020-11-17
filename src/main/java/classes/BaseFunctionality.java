@@ -27,7 +27,7 @@ public abstract class BaseFunctionality {
 
     public static void navigateToURL(String url){
         driver.navigate().to(url); // go to instagram
-        WebElement acceptBtn = driver.findElement(By.cssSelector(".aOOlW.bIiDR"));
+        WebElement acceptBtn = driver.findElement(By.cssSelector(".aOOlW.bIiDR")); //TO FIX !!!
         acceptBtn.click(); // accept cookies
 
     }
