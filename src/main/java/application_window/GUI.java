@@ -1,6 +1,8 @@
 package application_window;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
@@ -35,9 +37,19 @@ public class GUI implements ActionListener{
         int yButton = (heightFrame / 2) - heightButton;
 
         JFrame window = createWindow("Instagram Manager Bot", widthFrame, heightFrame);
+        window.getContentPane().setBackground(new Color(20, 20, 20));
+
         JButton button = createButton("Follow for Follow", xButton, yButton, widthButton, heightButton);
-        window.add(button);
+        button.setFocusPainted(false);
+        button.setBackground(new Color(20, 20, 20));
+        button.setForeground(new Color(189, 255, 174));
+        //button.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 1, true));
+        button.setBorder(new RoundedBorder(35));
         button.addActionListener(this);
+
+
+
+        window.add(button);
         window.setVisible(true);
     }
 
