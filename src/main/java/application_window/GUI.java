@@ -1,35 +1,60 @@
 package application_window;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 
 import static application_window.AppRunner.executeFTF;
 
-public class GUI{
+public class GUI implements ActionListener{
+    public JFrame frame;
+    public JButton button;
 
-    public static JFrame createWindow() {
-        JFrame frame = new JFrame("Instagram Manager Bot");
-        frame.setSize(500, 465);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setLayout(null);
-        return frame;
+    public JFrame createWindow(String name, int width, int height) {
+        this.frame = new JFrame(name);
+        this.frame.setSize(width, height);
+        this.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.frame.setLayout(null);
+        return this.frame;
     }
 
-    public static JButton createButton(String name) {
-        JButton b = new JButton(name);
-        JFrame f = createWindow();
-        int width = f.getWidth() / 2;
-        int height = 40;
-        int x = (f.getWidth() / 2) - ((f.getWidth() / 2) / 2);
-        int y = (f.getHeight() / 2) - height;
-        b.setBounds(x, y, width, height);
-        return b;
+    public JButton createButton(String name, int x, int y, int width, int height) {
+        this.button = new JButton(name);
+        this.button.setBounds(x, y, width, height);
+        return this.button;
     }
 
-    static class Action implements ActionListener {
-        public void actionPerformed (ActionEvent e){
+    public void constructApplication(){
+        int widthFrame = 500;
+        int heightFrame = 465;
+
+        int widthButton = widthFrame / 2;
+        int heightButton = 40;
+        int xButton = (widthFrame / 2) - ((widthFrame / 2) / 2);
+        int yButton = (heightFrame / 2) - heightButton;
+
+        JFrame window = createWindow("Instagram Manager Bot", widthFrame, heightFrame);
+        window.getContentPane().setBackground(new Color(20, 20, 20));
+
+        JButton button = createButton("Follow for Follow", xButton, yButton, widthButton, heightButton);
+        button.setFocusPainted(false);
+        button.setBackground(new Color(20, 20, 20));
+        button.setForeground(new Color(189, 255, 174));
+        //button.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 1, true));
+        button.setBorder(new RoundedBorder(35));
+        button.addActionListener(this);
+
+
+
+        window.add(button);
+        window.setVisible(true);
+    }
+
+    public void actionPerformed (ActionEvent e){
+        if(e.getSource() == button){
             try {
                 executeFTF();
             } catch (FileNotFoundException fileNotFoundException) {
