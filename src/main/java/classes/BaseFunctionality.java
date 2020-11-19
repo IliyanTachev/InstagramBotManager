@@ -12,12 +12,18 @@ import java.util.concurrent.TimeUnit;
 public abstract class BaseFunctionality {
     protected static WebDriver driver;
     private static final String SITE_URL = "https://instagram.com";
-    private static final String CREDENTIALS_FILE = "./src/main/resources/credentials";
+    private static String CREDENTIALS_FILE;
     static{
         String driverPath;
         String os = System.getProperty("os.name");
-        if(os.equals("Mac OS X")) driverPath = "./chromedriver";
-        else driverPath = "chromedriver.exe"; // windows
+        if(os.equals("Mac OS X")) {
+            driverPath = "./chromedriver";
+            CREDENTIALS_FILE = "/Users/iliyan/Documents/programming/instagram_bot_manager/git/config/credentials";
+        }
+        else {
+            driverPath = "chromedriver.exe"; // windows
+            CREDENTIALS_FILE = "D:\\COMPUTER\\Hristian projects\\JAVA\\InstagramBotManeger project\\git\\resources\\credentials";
+        }
 
         System.setProperty("webdriver.chrome.driver", driverPath);
         ChromeOptions options = new ChromeOptions();
