@@ -5,7 +5,7 @@ import functionalities.impl.DefaultStrategy;
 
 import java.io.FileNotFoundException;
 import java.util.Map;
-import java.util.Scanner;
+import java.util.Scanner;    
 
 public final class Functions {
     public static void executeFTF(DriverController controller) throws FileNotFoundException {

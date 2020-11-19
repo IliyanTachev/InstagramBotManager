@@ -1,6 +1,6 @@
 package functionalities;
 
-import classes.BaseFunctionality;
+import classes.DriverController;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 
@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FTF extends BaseFunctionality {
-    public FTF(String accountName) throws FileNotFoundException {
-        loginToIG(accountName);
+public class FTF extends DriverController {
+    public FTF(FTFStrategy strategy) throws FileNotFoundException {
+        strategy.execute();
     }
     public Map<String, String> getCategoriesByHashtag(String hashtag){
         Map<String, String> categories = new HashMap<>();
@@ -23,6 +23,5 @@ public class FTF extends BaseFunctionality {
         for(int i=0;i<categoryLinks.size();i++) categories.put(categoryNames.get(i), categoryLinks.get(i));
         return categories;
     }
-
 
 }
