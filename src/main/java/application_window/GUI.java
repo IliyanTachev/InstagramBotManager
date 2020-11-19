@@ -44,7 +44,7 @@ public class GUI implements ActionListener{
         button.setBackground(new Color(20, 20, 20));
         button.setForeground(new Color(189, 255, 174));
         //button.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255), 1, true));
-        button.setBorder(new RoundedBorder(35));
+        button.setBorder(new RoundedBorder(0));
         button.addActionListener(this);
 
 
