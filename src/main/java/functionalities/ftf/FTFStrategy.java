@@ -1,4 +1,4 @@
-package functionalities;
+package functionalities.ftf;
 
 import classes.DriverController;
 import org.openqa.selenium.WebDriver;

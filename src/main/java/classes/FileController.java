@@ -4,15 +4,17 @@ import classes.Account;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 
-public class FileReader {
+public class FileController {
     private final File file;
 
-    public FileReader(String filename){
+    public FileController(String filename){
         file = new File(filename);
     }
 
@@ -30,5 +32,24 @@ public class FileReader {
         }
 
         return accounts;
+    }
+
+    public List<String> getAllData(){
+        List<String> data = new ArrayList<>();
+        Scanner myReader = null;
+        try {
+            myReader = new Scanner(file);
+        } catch (FileNotFoundException e) {
+            System.out.println("File cannot be found.");
+        }
+        while (myReader.hasNextLine()) {
+            data.add(myReader.nextLine());
+        }
+        return data;
+    }
+
+    public void putData(String data) throws IOException {
+        FileWriter fileWriter = new FileWriter(file);
+        fileWriter.write(data);
     }
 }

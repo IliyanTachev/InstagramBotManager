@@ -8,7 +8,6 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 
 import java.io.FileNotFoundException;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class DriverController {
@@ -18,23 +17,21 @@ public class DriverController {
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--lang=en");
         driver = new ChromeDriver(options);
-        navigateToURL(Paths.SITE_URL);
     }
 
     public void navigateToURL(String url){
         driver.navigate().to(url);
         if(url.equals(Paths.SITE_URL)){ // instagram only
-            WebElement acceptBtn = driver.findElement(By.cssSelector(".aOOlW.bIiDR")); //TO FIX !!!
+            WebElement acceptBtn = driver.findElement(By.cssSelector("button.aOOlW.bIiDR")); //TO FIX !!!
             acceptBtn.click(); // accept cookies
         }
     }
 
     public void loginToIG(String accountName) throws FileNotFoundException { // String username, String password
         navigateToURL(Paths.SITE_URL);
-        FileReader fileController = new FileReader(Paths.CREDENTIALS_FILE);
+        FileController fileController = new FileController(Paths.CREDENTIALS_FILE);
         Account account = fileController.getAccountByName(accountName);
-        WebElement usernameInput = handleExceptionIfElementNotFound(By.cssSelector("[name=\"username\"]"), "username");
-        if(usernameInput == null) return;
+        WebElement usernameInput = driver.findElement(By.cssSelector("[name=\"username\"]"));
 
         usernameInput.sendKeys(account.getEmail());
         WebElement passwordInput = driver.findElement(By.cssSelector("[name=\"password\"]"));
