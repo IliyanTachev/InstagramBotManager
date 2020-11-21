@@ -1,5 +1,9 @@
 package application_window;
 
+import classes.DriverController;
+import classes.Functions;
+import org.openqa.selenium.WebDriver;
+
 import javax.swing.*;
 import javax.swing.border.Border;
 import java.awt.*;
@@ -7,11 +11,14 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 
-import static application_window.AppRunner.executeFTF;
-
 public class GUI implements ActionListener{
     public JFrame frame;
     public JButton button;
+    private DriverController controller;
+
+    public GUI(DriverController controller) {
+        this.controller = controller;
+    }
 
     public JFrame createWindow(String name, int width, int height) {
         this.frame = new JFrame(name);
@@ -56,7 +63,7 @@ public class GUI implements ActionListener{
     public void actionPerformed (ActionEvent e){
         if(e.getSource() == button){
             try {
-                executeFTF();
+                Functions.executeFTF(controller);
             } catch (FileNotFoundException fileNotFoundException) {
                 fileNotFoundException.printStackTrace();
             }
