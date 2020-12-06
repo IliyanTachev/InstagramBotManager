@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" onMouseEntered="#anchorPane_defaultOptions" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="application_window.Controller">
+   <children>
+      <ComboBox fx:id="chooseAcc" layoutX="358.0" layoutY="288.0" onMouseClicked="#chooseAcc_onMouseClicked" prefHeight="43.0" prefWidth="228.0" promptText="Choose an account" style="-fx-background-color: #141414; -fx-background-radius: 30;" />
+      <Button fx:id="logIn" disable="true" layoutX="515.0" layoutY="353.0" mnemonicParsing="false" onAction="#button_onAction" onMouseEntered="#button_onMouseEntered" onMouseExited="#button_onMouseExited" onMousePressed="#button_onMousePressed" onMouseReleased="#button_onMouseReleased" prefHeight="25.0" prefWidth="71.0" style="-fx-background-color: #141414; -fx-background-radius: 30;" text="Log In" textFill="#bdffae">
+         <cursor>
+            <Cursor fx:constant="HAND" />
+         </cursor>
+      </Button>
+      <Pane fx:id="pane1" prefHeight="197.0" prefWidth="508.0" style="-fx-background-color: blue;">
+         <children>
+            <Button fx:id="createAcc" mnemonicParsing="false" onAction="#button_onAction" onMouseEntered="#button_onMouseEntered" onMouseExited="#button_onMouseExited" onMousePressed="#button_onMousePressed" onMouseReleased="#button_onMouseReleased" prefHeight="43.0" prefWidth="228.0" style="-fx-background-radius: 30; -fx-background-color: #141414;" text="Create Account" textFill="#bdffae">
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <cursor>
+                  <Cursor fx:constant="HAND" />
+               </cursor>
+            </Button>
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

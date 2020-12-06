@@ -23,7 +23,7 @@ public class FileController {
         return account;
     }
 
-    private List<Account> getAllAccounts() throws FileNotFoundException {
+    public List<Account> getAllAccounts() throws FileNotFoundException {
         List<Account> accounts = new ArrayList<>();
         Scanner myReader = new Scanner(file);
         while (myReader.hasNextLine()) {

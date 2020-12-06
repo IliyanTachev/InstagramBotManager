@@ -2,7 +2,7 @@ package functionalities.ftf;
 
 import classes.DriverController;
 import classes.FileController;
-import functionalities.Paths;
+import classes.Paths;
 
 import java.io.FileNotFoundException;
 import java.util.List;
