@@ -1,5 +1,6 @@
 package core;
 
+import GUI.ControllerGUI;
 import common.Paths;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,13 +17,15 @@ import java.net.URL;
 public class Engine extends Application {
     @Override
     public void start (Stage stage) throws Exception {
+        ControllerGUI gui = new ControllerGUI();
         URL url = new File("D:\\COMPUTER\\Hristian projects\\JAVA\\InstagramBotManeger project\\git\\InstagramBotManager\\src\\main\\java\\GUI\\javafx.fxml").toURI().toURL();
         Parent root = FXMLLoader.load(url);
         stage.setTitle("Instagram Bot Manager");
 
         Scene scene = new Scene(root);
-        //scene.getStylesheets().add("D:\\COMPUTER\\Hristian projects\\JAVA\\zip files\\style.css");
         stage.setScene(scene);
+        //scene.getStylesheets().add("D:\\COMPUTER\\Hristian projects\\JAVA\\zip files\\style.css");
+        //gui.anchorPane_setDefaultOptions();
         stage.show();
     }
 
