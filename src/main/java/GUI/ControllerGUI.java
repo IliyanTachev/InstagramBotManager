@@ -1,6 +1,7 @@
 package GUI;
 
 import core.Controller;
+import core.Functionalities;
 import entities.Account;
 import javafx.scene.Node;
 import javafx.scene.effect.BoxBlur;
@@ -28,6 +29,7 @@ import javafx.scene.layout.Pane;
 
 public class ControllerGUI implements Initializable, Cloneable {
 
+    private Functionalities functionalities = new Functionalities();
     private final Controller controller = new Controller();
     private ObservableList<String> accountList;
 
@@ -376,7 +378,7 @@ public class ControllerGUI implements Initializable, Cloneable {
                 break;
 
             case "b_followForFollow":
-                System.out.println("Functionality not finished!");
+                functionalities.executeFTF();
                 break;
 
             default:

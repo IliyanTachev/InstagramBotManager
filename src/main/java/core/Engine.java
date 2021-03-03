@@ -17,8 +17,16 @@ import java.net.URL;
 public class Engine extends Application {
     @Override
     public void start (Stage stage) throws Exception {
+
+        URL url;
+        String os = System.getProperty("os.name");
+        if (os.equals("Mac OS X")) {
+            url = new File("/Users/iliyan/Documents/programming/instagram_bot_manager/git/InstagramBotManager/src/main/java/GUI/javafx.fxml").toURI().toURL();
+        } else {
+            url = new File("D:\\COMPUTER\\Hristian projects\\JAVA\\InstagramBotManeger project\\git\\InstagramBotManager\\src\\main\\java\\GUI\\javafx.fxml").toURI().toURL();
+        }
+
         ControllerGUI gui = new ControllerGUI();
-        URL url = new File("D:\\COMPUTER\\Hristian projects\\JAVA\\InstagramBotManeger project\\git\\InstagramBotManager\\src\\main\\java\\GUI\\javafx.fxml").toURI().toURL();
         Parent root = FXMLLoader.load(url);
         stage.setTitle("Instagram Bot Manager");
 

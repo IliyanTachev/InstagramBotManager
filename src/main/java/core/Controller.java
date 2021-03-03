@@ -1,5 +1,6 @@
 package core;
 
+import org.openqa.selenium.JavascriptExecutor;
 import utilities.FileController;
 import common.Paths;
 import entities.Account;
@@ -61,5 +62,11 @@ public class Controller {
 
     public void wait(int seconds){
        webDriver.manage().timeouts().implicitlyWait(seconds, TimeUnit.SECONDS);
+    }
+
+    public void executeScript(WebElement element) {
+        JavascriptExecutor javascriptExecutor = (JavascriptExecutor) webDriver;
+//        javascriptExecutor.executeScript("arguments[0].click();", findElement(By.cssSelector("button.sqdOP.yWX7d.y3zKF")));
+        javascriptExecutor.executeScript("arguments[0].click();", element);
     }
 }
