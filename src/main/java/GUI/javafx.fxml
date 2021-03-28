@@ -10,7 +10,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.ControllerGUI">
+<AnchorPane fx:id="anchorPane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" style="-fx-background-color: #000000;" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.ControllerGUI">
    <children>
       <Pane fx:id="pane1" prefHeight="400.0" prefWidth="600.0">
          <children>
@@ -45,21 +45,34 @@
       </Pane>
       <Pane fx:id="pane3" prefHeight="400.0" prefWidth="600.0" visible="false">
          <children>
-            <Button fx:id="b_followForFollow" layoutX="25.0" layoutY="40.0" mnemonicParsing="false" onAction="#button_onAction" onMouseEntered="#button_onMouseEntered" onMouseExited="#button_onMouseExited" onMousePressed="#button_onMousePressed" onMouseReleased="#button_onMouseReleased" prefHeight="90.0" prefWidth="150.0" style="-fx-background-color: #141414; -fx-background-radius: 15;" text="Follow for Follow" textFill="#bdffae">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Button>
-            <Button layoutX="225.0" layoutY="40.0" mnemonicParsing="false" onMouseEntered="#button_onMouseEntered" onMouseExited="#button_onMouseExited" onMousePressed="#button_onMousePressed" onMouseReleased="#button_onMouseReleased" prefHeight="90.0" prefWidth="150.0" style="-fx-background-color: #141414; -fx-background-radius: 15;" text="not finished" textFill="#bdffae">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Button>
-            <Button layoutX="425.0" layoutY="40.0" mnemonicParsing="false" onMouseEntered="#button_onMouseEntered" onMouseExited="#button_onMouseExited" onMousePressed="#button_onMousePressed" onMouseReleased="#button_onMouseReleased" prefHeight="90.0" prefWidth="150.0" style="-fx-background-color: #141414; -fx-background-radius: 15;" text="not finished" textFill="#bdffae">
-               <font>
-                  <Font name="System Bold" size="12.0" />
-               </font>
-            </Button>
+            <Pane fx:id="pane4" prefHeight="400.0" prefWidth="600.0">
+               <children>
+                  <Button fx:id="b_followForFollow" layoutX="225.0" layoutY="33.0" mnemonicParsing="false" onAction="#button_onAction" onMouseEntered="#button_onMouseEntered" onMouseExited="#button_onMouseExited" onMousePressed="#button_onMousePressed" onMouseReleased="#button_onMouseReleased" prefHeight="90.0" prefWidth="150.0" style="-fx-background-color: #141414; -fx-background-radius: 15;" text="Follow for Follow" textFill="#bdffae">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="b_uploadPhoto" layoutX="31.0" layoutY="33.0" mnemonicParsing="false" onAction="#button_onAction" onMouseEntered="#button_onMouseEntered" onMouseExited="#button_onMouseExited" onMousePressed="#button_onMousePressed" onMouseReleased="#button_onMouseReleased" prefHeight="90.0" prefWidth="150.0" style="-fx-background-color: #141414; -fx-background-radius: 15;" text="Upload Photo" textFill="#bdffae">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Button>
+                  <Button layoutX="418.0" layoutY="33.0" mnemonicParsing="false" onMouseEntered="#button_onMouseEntered" onMouseExited="#button_onMouseExited" onMousePressed="#button_onMousePressed" onMouseReleased="#button_onMouseReleased" prefHeight="90.0" prefWidth="150.0" style="-fx-background-color: #141414; -fx-background-radius: 15;" text="not finished" textFill="#bdffae">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="b_changePhoto" layoutX="31.0" layoutY="33.0" mnemonicParsing="false" onAction="#button_onAction" onMouseEntered="#button_onMouseEntered" onMouseExited="#button_onMouseExited" onMousePressed="#button_onMousePressed" onMouseReleased="#button_onMouseReleased" prefHeight="45.0" prefWidth="150.0" style="-fx-background-color: #141414; -fx-background-radius: 15 15 0 0; -fx-border-color: #000000; -fx-border-style: hidden none solid hidden; -fx-border-width: 1px;" text="Change Photo" textFill="#bdffae" visible="false">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font></Button>
+                  <Button fx:id="b_approvePhoto" layoutX="31.0" layoutY="78.0" mnemonicParsing="false" onAction="#button_onAction" onMouseEntered="#button_onMouseEntered" onMouseExited="#button_onMouseExited" onMousePressed="#button_onMousePressed" onMouseReleased="#button_onMouseReleased" prefHeight="45.0" prefWidth="150.0" style="-fx-background-color: #141414; -fx-background-radius: 0 0 15 15; -fx-border-style: solid hidden hidden hidden; -fx-border-width: 1px; -fx-border-color: #000000;" text="Approve Photo" textFill="#bdffae" visible="false">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Button>
+               </children>
+            </Pane>
          </children>
       </Pane>
    </children>

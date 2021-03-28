@@ -18,10 +18,13 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.ComboBox;
 import javafx.scene.input.MouseEvent;
 
+import java.awt.*;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
@@ -32,6 +35,11 @@ public class ControllerGUI implements Initializable, Cloneable {
     private Functionalities functionalities = new Functionalities();
     private final Controller controller = new Controller();
     private ObservableList<String> accountList;
+    public static Thread ftf;
+    private static Thread threadPaneTransition;
+    public static boolean isLoggedIn = false;
+    public static boolean changePhotoBtnWasClicked = false;
+    public static boolean approvePhotoBtnWasClicked = false;
 
     @FXML
     private AnchorPane anchorPane = new AnchorPane();
@@ -41,6 +49,30 @@ public class ControllerGUI implements Initializable, Cloneable {
     private Pane pane2 = new Pane();
     @FXML
     private Pane pane3 = new Pane();
+    @FXML
+    private Pane pane4 = new Pane();
+    @FXML
+    private Pane pane5 = new Pane();
+
+    public Pane getPane1() {
+        return pane1;
+    }
+
+    public Pane getPane2() {
+        return pane2;
+    }
+
+    public Pane getPane3() {
+        return pane3;
+    }
+
+    public Pane getPane4() {
+        return pane4;
+    }
+
+    public Pane getPane5() {
+        return pane5;
+    }
 
     @FXML
     private Button b_createAcc;
@@ -48,6 +80,12 @@ public class ControllerGUI implements Initializable, Cloneable {
     private Button b_logIn;
     @FXML
     private Button b_followForFollow;
+    @FXML
+    private Button b_uploadPhoto;
+    @FXML
+    private Button b_changePhoto;
+    @FXML
+    private Button b_approvePhoto;
 
     @FXML
     private ComboBox<String> chooseAcc = new ComboBox<>();
@@ -61,9 +99,7 @@ public class ControllerGUI implements Initializable, Cloneable {
     @FXML
     private Line topL;
 
-    private Thread threadPaneTransition;
-
-    private void initialize_accountList() throws FileNotFoundException { // TODO: THIS SHOULD HAPPEN AT THE START OF THE PROGRAM AND NOT ON MOUSE ENTERED INTO THE ANCHOR PANE
+    private void initialize_accountList() throws FileNotFoundException {
         accountList = FXCollections.observableArrayList();
         FileController controller = new FileController(Paths.CREDENTIALS_FILE);
         List<Account> accounts = controller.getAllAccounts();
@@ -116,7 +152,7 @@ public class ControllerGUI implements Initializable, Cloneable {
         line.setVisible(true);
     }
 
-    private void paneTransitionAnimation(Pane pane1, Pane pane2) {
+    public static void paneTransitionAnimation(Pane inputPane1, Pane inputPane2) {
         threadPaneTransition = new Thread(() -> {
             BoxBlur blur = new BoxBlur();
             BigDecimal opacity = new BigDecimal("1.00");
@@ -135,8 +171,8 @@ public class ControllerGUI implements Initializable, Cloneable {
                 counter++;
                 if (counter > 40) {
                     if (counter == 41) {
-                        pane1.setVisible(false);
-                        pane2.setVisible(true);
+                        inputPane1.setVisible(false);
+                        inputPane2.setVisible(true);
                     }
 
                     opacity = opacity.add(new BigDecimal("0.025"));
@@ -152,7 +188,7 @@ public class ControllerGUI implements Initializable, Cloneable {
                         blur.setWidth(0);
                         blur.setHeight(0);
                     }
-                    pane2.setEffect(blur);
+                    inputPane2.setEffect(blur);
 
                 } else {
 
@@ -164,10 +200,10 @@ public class ControllerGUI implements Initializable, Cloneable {
                     }
 
                     opacity = opacity.subtract(new BigDecimal("0.025"));
-                    pane1.setEffect(blur);
+                    inputPane1.setEffect(blur);
                 }
 
-                pane1.setOpacity(opacity.doubleValue());
+                inputPane1.setOpacity(opacity.doubleValue());
             }
         });
         threadPaneTransition.start();
@@ -363,22 +399,50 @@ public class ControllerGUI implements Initializable, Cloneable {
                 break;
 
             case "b_logIn":
-                Thread t = new Thread(() -> {
+                Thread logIn = new Thread(() -> {
                     try {
                         paneTransitionAnimation(pane1, pane2);
                         loadingAnimation(leftL, rightL, bottomL, topL, 375, 181, 45, 3);
                         controller.loginToIG(chooseAcc.getValue());
                         Thread.sleep(500);
                         paneTransitionAnimation(pane2, pane3);
+                        isLoggedIn = true;
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 });
-                t.start();
+                logIn.start();
                 break;
 
             case "b_followForFollow":
-                functionalities.executeFTF();
+                ftf = new Thread(() -> {
+                    try {
+                        functionalities.executeFTF();
+                    } catch (IOException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                });
+                ftf.start();
+                break;
+
+            case "b_uploadPhoto":
+                Thread uploadPhoto = new Thread(() -> {
+                    b_uploadPhoto.setVisible(false);
+                    b_changePhoto.setVisible(true);
+                    b_approvePhoto.setVisible(true);
+                    try {
+                        functionalities.executeUploadPhoto_Auto(b_uploadPhoto, b_changePhoto, b_approvePhoto);
+                    } catch (IOException | AWTException | InterruptedException e) { e.printStackTrace(); }
+                });
+                uploadPhoto.start();
+                break;
+
+            case "b_changePhoto":
+                changePhotoBtnWasClicked = true;
+                break;
+
+            case "b_approvePhoto":
+                approvePhotoBtnWasClicked = true;
                 break;
 
             default:

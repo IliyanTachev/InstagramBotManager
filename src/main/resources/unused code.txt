@@ -1,0 +1,472 @@
+//  RESIZE ANIMATION NOT WORKING --> 
+
+        for(int i = 0; i < 10; i++){
+            Thread.sleep(1000);
+            createAcc.setPrefWidth(228 + i);
+            createAcc.setPrefHeight(43 + i);
+        }
+
+----------------------------------------------------------------------------------------------------------------
+
+//MOTION BLUR EFFECT WORKING -->
+
+	Thread threadMB = new Thread(() -> {
+            MotionBlur blur = new MotionBlur();
+            int counter = 15;
+            blur.setAngle(150);
+            blur.setRadius(0);
+            button.setEffect(blur);
+
+            for (int i = 0; i < 30; i++) {
+                try {
+                    Thread.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if (i < 15) {
+                    blur.setRadius(i);
+                } else {
+                    blur.setRadius(counter);
+                    counter -= 1;
+                }
+            }
+        });
+        threadMB.start();
+
+----------------------------------------------------------------------------------------------------------------
+
+//PANE OPACITY ANIMATION WORKING -->
+
+	Thread threadBlur = new Thread(() -> {
+        BigDecimal opacity = new BigDecimal("1.00");
+        int counter = 0;
+           
+	for (int i = 0; i < 40 * 2; i++) {
+        	try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                counter++;
+                if (counter > 40) {
+                    opacity = opacity.add(new BigDecimal("0.025"));
+
+                } else {
+                    opacity = opacity.subtract(new BigDecimal("0.025"));
+                }
+                pane1.setOpacity(opacity.doubleValue());
+            }
+        });
+        threadBlur.start();
+
+----------------------------------------------------------------------------------------------------------------
+
+//PANE TRANSITION ANIMATION WORKING -->
+
+	Thread threadBlur = new Thread(() -> {
+            BoxBlur blur = new BoxBlur();
+            BigDecimal opacity = new BigDecimal("1.00");
+            int counter = 0;
+            double blurHeight = 0;
+            double blurWidth = 0;
+            blur.setIterations(10);
+
+            for (int i = 0; i < 40 * 2; i++) {
+                try {
+                    Thread.sleep(40);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                counter++;
+                if (counter > 40) {
+                    if(counter == 41){
+                        pane1.setVisible(false);
+                        pane2.setVisible(true);
+                    }
+
+                    opacity = opacity.add(new BigDecimal("0.025"));
+
+                    blur.setWidth(blurWidth);
+                    blurWidth--;
+                    if (i % 3 == 0) {
+                        blur.setHeight(blurHeight);
+                        blurHeight--;
+                    }
+
+                    if(counter == 80){
+                        blur.setWidth(0);
+                        blur.setHeight(0);
+                    }
+                    pane2.setEffect(blur);
+
+                } else {
+
+                    blur.setWidth(blurWidth);
+                    blurWidth++;
+                    if (i % 3 == 0) {
+                        blur.setHeight(blurHeight);
+                        blurHeight++;
+                    }
+
+                    opacity = opacity.subtract(new BigDecimal("0.025"));
+                    pane1.setEffect(blur);
+                }
+
+                pane1.setOpacity(opacity.doubleValue());
+            }
+        });
+        threadBlur.start();
+
+----------------------------------------------------------------------------------------------------------------
+
+//LOADING ANIMATION WITH SEPARATORS NOT WORKING -->
+
+    private void loadingAnimation(Separator line1, Separator line2) throws InterruptedException {
+        //LINE 2 SHOULD BE: X = line1.getLayoutX() + 64, Y = line1.getLayoutY();
+        double leftLineLayoutX = line1.getLayoutX();
+        double leftLineLayoutY = line1.getLayoutY();
+
+        double rightLineLayoutX = line2.getLayoutX();
+        double rightLineLayoutY = line2.getLayoutY();
+
+        double topLineLayoutX = topLineTest.getLayoutX(); //  X = 407
+        double topLineLayoutY = topLineTest.getLayoutY(); //  Y = 154
+
+        double bottomLineLayoutX = bottomLineTest.getLayoutX();
+        double bottomLineLayoutY = bottomLineTest.getLayoutY();
+        //line1 X = 378, Y = 181
+
+        Thread.sleep(1000);
+        Thread threadLA = new Thread(() -> {
+            boolean passedOnce = false;
+            for (int i = 0; i < 1; i--) {
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                if(passedOnce){
+                    line1.setLayoutX(leftLineLayoutX);
+                    line1.setLayoutY(leftLineLayoutY);
+
+                    line2.setLayoutX(rightLineLayoutX);
+                    line2.setLayoutY(rightLineLayoutY);
+
+                    passedOnce = false;
+                }
+
+                if (line1.getLayoutX() >= leftLineLayoutX && line1.getLayoutX() < bottomLineLayoutX && line1.getLayoutY() >= leftLineLayoutY && line1.getLayoutY() < bottomLineLayoutY) {
+                    //TODO: LEFT TO BOTTOM                    (just wanted the highlight)
+                    setLineCoordinatesAndRadius(line1, line1.getLayoutX() + 1, line1.getRotate() + 3.1, line1.getLayoutY() + 1);
+
+                    //left line is bottom (ending the movement of line 1)
+                    if (line1.getLayoutX() == bottomLineLayoutX - 1) {
+                        setLineCoordinatesAndRadius(line1, bottomLineLayoutX, 90, bottomLineLayoutY);
+                    }
+                } else if (line1.getLayoutX() == bottomLineLayoutX && line2.getLayoutX() <= rightLineLayoutX && line2.getLayoutY() <= rightLineLayoutY && line2.getLayoutX() > topLineLayoutX && line2.getLayoutY() > topLineLayoutY) {
+                    //check if line 1 is bottom so we can move right line to the top (1 line above)
+                    //TODO: RIGHT TO TOP                    (just wanted the highlight)
+                    setLineCoordinatesAndRadius(line2, line2.getLayoutX() - 1.1, line2.getRotate() + 3.3, line2.getLayoutY() - 1);
+
+                    //right line is top (ending the movement of line 2)
+                    if (line2.getLayoutX() > topLineLayoutX && line2.getLayoutX() < topLineLayoutX + 2) {
+                        setLineCoordinatesAndRadius(line2, topLineLayoutX, 90, topLineLayoutY);
+                    }
+                } else if (line2.getLayoutX() == topLineLayoutX && line1.getLayoutX() >= bottomLineLayoutX && line1.getLayoutY() <= bottomLineLayoutY && line1.getLayoutX() < rightLineLayoutX && line1.getLayoutY() > rightLineLayoutY) {
+                    //check if line2 is top so we can move bottom line to the right (1 line above)
+                    //TODO: BOTTOM TO RIGHT                    (just wanted the highlight)
+                    setLineCoordinatesAndRadius(line1, line1.getLayoutX() + 1, line1.getRotate() + 3.1, line1.getLayoutY() - 1);
+
+                    //bottom line is right (ending the movement of line 1)
+                    if (line1.getLayoutX() < rightLineLayoutX && line1.getLayoutX() >= rightLineLayoutX - 2) {
+                        setLineCoordinatesAndRadius(line1, rightLineLayoutX - 3, 180, rightLineLayoutY);
+                    }
+                }else if(line1.getLayoutX() == rightLineLayoutX - 3 && line2.getLayoutX() <= topLineLayoutX && line2.getLayoutY() >= topLineLayoutY - 2 && line2.getLayoutX() > leftLineLayoutX && line2.getLayoutY() < leftLineLayoutY){
+                    //check if line1 is right so we can move top line to the left (1 line above)
+                    //TODO: TOP TO LEFT                    (just wanted the highlight)
+                    setLineCoordinatesAndRadius(line2, line2.getLayoutX() - 1.07, line2.getRotate() + 3.3, line2.getLayoutY() + 1);
+
+                    //top line is left (ending the movement of line 2)
+                    if (line2.getLayoutX() > leftLineLayoutX && line2.getLayoutX() < leftLineLayoutX + 1) {
+                        setLineCoordinatesAndRadius(line2, leftLineLayoutX - 3, 180, leftLineLayoutY);
+                    }
+                } else {
+                    double line1X = line1.getLayoutX();
+                    double line1Y = line1.getLayoutY();
+
+                    line1.setLayoutX(line2.getLayoutX());
+                    line1.setLayoutY(line2.getLayoutY());
+
+                    line2.setLayoutX(line1X);
+                    line2.setLayoutY(line1Y);
+                    passedOnce = true;
+                }
+            }
+        });
+        threadLA.start();
+    }
+
+
+----------------------------------------------------------------------------------------------------------------
+
+//RETURNS THE BACKGROUND RADIUS OF A BUTTON WORKING -->
+
+	private String getButtonRadius(Button button) {
+            String text = button.getStyle() + "          ";
+            String wordToFind = "-fx-background-radius";
+
+            Pattern word = Pattern.compile(wordToFind);
+            Matcher match = word.matcher(text);
+
+            match.find();
+            String backgroundRadius = text.substring(match.start(), match.end() + 10);
+            backgroundRadius = backgroundRadius.substring(0, backgroundRadius.indexOf(";") + 1);
+
+            return backgroundRadius;
+    	}
+
+----------------------------------------------------------------------------------------------------------------
+
+//CUSTOM CURSOR WORKING -->
+
+	FileInputStream inputstream = new FileInputStream("D:\\COMPUTER\\Hristian projects\\JAVA\\InstagramBotManeger project\\git\\InstagramBotManager\\src\\main\\java\\application_window\\cantClickCursor1.png");
+        Image image = new Image(inputstream);
+        logIn.setCursor(new ImageCursor(image, image.getWidth() / 5, image.getHeight() /5));
+
+----------------------------------------------------------------------------------------------------------------
+
+//FINISH THE LOADING ANIMATION SO THE SQUARE ROTATES PROPERLY (NEED TO FIX ONLY THE ROTATION AND ALL THE METHODS NEEDED ARE HERE) -->
+
+    private void setLineCoordinatesAndRadius(Line line, double X, double rotate, double Y) {
+        line.setLayoutX(X);
+        line.setRotate(rotate);
+        line.setLayoutY(Y);
+    }
+
+    private void setLineCoordinatesAndRadiusAnimation(Line line1, Line line2, double X, double rotateValue, double Y, boolean finalSet, Map<String, List<Double>> lines) {
+        //we multiply by -1 the values for line2 because the two lines go in opposite directions
+        if (finalSet) {
+            if (X == lines.get("bottom").get(0)) {
+                setLineCoordinatesAndRadius(line1, X, rotateValue, Y);
+                setLineCoordinatesAndRadius(line2, lines.get("top").get(0), 90, lines.get("top").get(1));
+            } else if (X == lines.get("right").get(0)) {
+                setLineCoordinatesAndRadius(line1, X, rotateValue, Y);
+                setLineCoordinatesAndRadius(line2, lines.get("left").get(0), 180, lines.get("left").get(1));
+            }
+        } else {
+            setLineCoordinatesAndRadius(line1, line1.getLayoutX() + X, line1.getRotate() + rotateValue, line1.getLayoutY() + Y);
+            setLineCoordinatesAndRadius(line2, line2.getLayoutX() + X * -1, line2.getRotate() + rotateValue, line2.getLayoutY() + Y * -1);
+        }
+    }
+
+    private void setLineDefaultValues(Line line, double X, double Y, double length, double width, String color) {
+        BoxBlur blur = new BoxBlur();
+        blur.setHeight(width);
+        blur.setWidth(width);
+        blur.setIterations(1);
+
+        line.setStrokeWidth(width);
+        line.setStartX(0);
+        line.setStartY(0);
+        line.setEndX(0);
+        line.setEndY(length);
+        line.setLayoutX(X);
+        line.setLayoutY(Y);
+        line.setEffect(blur);
+        line.setStyle("-fx-stroke: " + color);
+        line.setVisible(true);
+    }    
+
+
+    private void loadingAnimation(Line line1, Line line2, Line bottom, Line top, double X, double Y, double length, double width) {
+        setLineDefaultValues(line1, X, Y, length, width, "#bdffae");
+        setLineDefaultValues(line2, X + (length + 16), Y, length, width, "#bdffae");
+        setLineDefaultValues(bottom, X + 31, Y + 31, length, width, "#bdffae");
+        setLineDefaultValues(top, X + 31, Y - 30, length, width, "#bdffae");
+        bottom.setVisible(false);
+        top.setVisible(false);
+        bottom.setRotate(90);
+        bottom.setOpacity(0);
+        top.setRotate(-90);
+        top.setOpacity(0);
+
+        double leftLineLayoutX = line1.getLayoutX();
+        double leftLineLayoutY = line1.getLayoutY();
+
+        double rightLineLayoutX = line2.getLayoutX();
+        double rightLineLayoutY = line2.getLayoutY();
+
+        double topLineLayoutX = leftLineLayoutX + (rightLineLayoutX - leftLineLayoutX) / 2 + 0.5;
+        double topLineLayoutY = leftLineLayoutY - 30;
+
+        double bottomLineLayoutX = topLineLayoutX;
+        double bottomLineLayoutY = leftLineLayoutY + 31;
+        //System.out.println(String.format("Left X: %f; Y: %f;\nBottom X: %f; Y: %f;\nRight X: %f; Y: %f;\nTop X: %f; Y: %f;\n", leftLineLayoutX, leftLineLayoutY, bottomLineLayoutX, bottomLineLayoutY, rightLineLayoutX, rightLineLayoutY, topLineLayoutX, topLineLayoutY));
+
+        //TODO: CHANGING THE NUMBER OF STEPS BREAKS THE ANIMATION
+        int numberOfSteps = 30;
+        Map<String, List<Double>> lines = new HashMap<>();
+        lines.put("left", new ArrayList<Double>() {{
+            add(leftLineLayoutX);
+            add(leftLineLayoutY);
+        }});
+        lines.put("right", new ArrayList<Double>() {{
+            add(rightLineLayoutX);
+            add(rightLineLayoutY);
+        }});
+        lines.put("top", new ArrayList<Double>() {{
+            add(topLineLayoutX);
+            add(topLineLayoutY);
+        }});
+        lines.put("bottom", new ArrayList<Double>() {{
+            add(bottomLineLayoutX);
+            add(bottomLineLayoutY);
+        }});
+
+        //waiting pane transition to finish
+        while (threadPaneTransition.isAlive()) {
+        }
+
+        Thread threadBLA = new Thread(() -> {
+            BigDecimal opacity = new BigDecimal("0.00");
+            boolean squareAnimation = false;
+            int timeMs = 100;
+            try {
+                for (int i = 0; i < 1; i--) {
+                    //stops the animation when its not needed
+                    if (threadPaneTransition.isAlive()) {
+                        return;
+                    }
+
+                    if (!squareAnimation) {
+                        timeMs = 25;
+                    }
+                    Thread.sleep(timeMs);
+
+                    if (line1.getLayoutX() >= leftLineLayoutX && line1.getLayoutX() < bottomLineLayoutX && line1.getLayoutY() >= leftLineLayoutY && line1.getLayoutY() < bottomLineLayoutY) {
+                        //left line go bottom, right line go top
+                        double travelX = (bottomLineLayoutX - leftLineLayoutX) / numberOfSteps;
+                        double travelRotate = 90 / numberOfSteps;
+                        double travelY = (bottomLineLayoutY - leftLineLayoutY) / numberOfSteps;
+
+                        if(squareAnimation){
+                            double travelXSquare = (rightLineLayoutX - bottomLineLayoutX) / numberOfSteps;
+                            double travelRotateSquare = -90 / numberOfSteps;
+                            double travelYSquare = (rightLineLayoutY - bottomLineLayoutY) / numberOfSteps;
+                            setLineCoordinatesAndRadiusAnimation(bottomL, topL, travelXSquare, travelRotateSquare, travelYSquare, false, lines);
+                            travelRotate *= -1;
+                        }
+
+                        setLineCoordinatesAndRadiusAnimation(line1, line2, travelX, travelRotate, travelY, false, lines);
+                        if(squareAnimation){
+                            System.out.printf("LeftL X: %f  Y: %f  Rotate: %f\nBottomL X: %f  Y: %f  Rotate: %f\nRightL X: %f  Y: %f  Rotate: %f\nTopL X: %f  Y: %f  Rotate: %f\n", line1.getLayoutX(), line1.getLayoutY(), line1.getRotate(), bottomL.getLayoutX(), bottomL.getLayoutY(), bottomL.getRotate(), rightL.getLayoutX(), rightL.getLayoutY(), rightL.getRotate(), topL.getLayoutX(), topL.getLayoutY(), topL.getRotate());
+                        }
+
+                        if (line1.getLayoutX() >= bottomLineLayoutX && line1.getLayoutX() < bottomLineLayoutX + travelX) {
+                            setLineCoordinatesAndRadiusAnimation(line1, line2, bottomLineLayoutX, 90, bottomLineLayoutY, true, lines);
+                            if(!squareAnimation){
+                                Thread.sleep(80);
+                            }
+                        }
+                        //System.out.printf("Line1 X: %f  Y: %f\n", line1.getLayoutX(), line1.getLayoutY());
+
+                    } else if (line1.getLayoutX() >= bottomLineLayoutX && line1.getLayoutX() < rightLineLayoutX && line1.getLayoutY() <= bottomLineLayoutY && line1.getLayoutY() > rightLineLayoutY) {
+                        //bottom line go right, top line go left
+                        double travelX = (rightLineLayoutX - bottomLineLayoutX) / numberOfSteps;
+                        double travelRotate = 90 / numberOfSteps;
+                        double travelY = (rightLineLayoutY - bottomLineLayoutY) / numberOfSteps;
+
+                        if(squareAnimation){
+                            double travelXSquare = (topLineLayoutX - rightLineLayoutX) / numberOfSteps;
+                            double travelRotateSquare = -90 / numberOfSteps;
+                            double travelYSquare = (rightLineLayoutY - topLineLayoutY) / numberOfSteps;
+                            setLineCoordinatesAndRadiusAnimation(bottomL, topL, travelXSquare, travelRotateSquare, travelYSquare, false, lines);
+                            travelRotate *= -1;
+                        }
+
+                        setLineCoordinatesAndRadiusAnimation(line1, line2, travelX, travelRotate, travelY, false, lines);
+                        if(squareAnimation){
+                            System.out.printf("LeftL X: %f  Y: %f  Rotate: %f\nBottomL X: %f  Y: %f  Rotate: %f\nRightL X: %f  Y: %f  Rotate: %f\nTopL X: %f  Y: %f  Rotate: %f\n", line1.getLayoutX(), line1.getLayoutY(), line1.getRotate(), bottomL.getLayoutX(), bottomL.getLayoutY(), bottomL.getRotate(), rightL.getLayoutX(), rightL.getLayoutY(), rightL.getRotate(), topL.getLayoutX(), topL.getLayoutY(), topL.getRotate());
+                        }
+
+                        if (line1.getLayoutX() >= rightLineLayoutX && line1.getLayoutX() < rightLineLayoutX + travelX) {
+                            setLineCoordinatesAndRadiusAnimation(line1, line2, rightLineLayoutX, 180, rightLineLayoutY, true, lines);
+                            if(!squareAnimation){
+                                Thread.sleep(80);
+                            }
+                        }
+                    } else {
+                        //on every rotation a square animation triggers
+                        if (!squareAnimation) {
+                            squareAnimation = true;
+
+                            bottom.setVisible(true);
+                            top.setVisible(true);
+                            for (int k = 0; k < 20; k++) {
+                                Thread.sleep(20);
+                                opacity = opacity.add(new BigDecimal("0.05"));
+                                bottom.setOpacity(opacity.doubleValue());
+                                top.setOpacity(opacity.doubleValue());
+                                //System.out.println("Bottom opacity: " + bottom.getOpacity() + "    Top opacity: " + top.getOpacity());
+
+                            }
+                        } else {
+                            squareAnimation = false;
+
+                            for (int k = 0; k < 20; k++) {
+                                Thread.sleep(20);
+
+                                opacity = opacity.subtract(new BigDecimal("0.05"));
+                                bottom.setOpacity(opacity.doubleValue());
+                                top.setOpacity(opacity.doubleValue());
+                                //System.out.println("Bottom opacity: " + bottom.getOpacity() + "    Top opacity: " + top.getOpacity());
+                            }
+                            bottom.setVisible(false);
+                            top.setVisible(false);
+                        }
+
+                        double line1X = line1.getLayoutX();
+                        double line1Y = line1.getLayoutY();
+                        line1.setLayoutX(line2.getLayoutX());
+                        line1.setLayoutY(line2.getLayoutY());
+                        line2.setLayoutX(line1X);
+                        line2.setLayoutY(line1Y);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+        threadBLA.start();
+    }
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+FTF functionality (inside the for loop)
+		int random = (int) ((Math.random() * (5 - 1)) + 1);
+                controller.wait(random);
+                try {
+                    imagesToClickOn.get(i).click();
+                } catch (Exception ignored) {
+                }
+
+
+                try {
+                    WebElement followBtn = controller.findElement(By.cssSelector(followBtnSelector));
+                    if (followBtn.getText().equals("Follow")) {
+                        controller.executeScript(followBtn);
+                        String accountName = controller.findElement(By.cssSelector(accountNameSelector)).getText();
+                        followedAccounts.add(accountName);
+                    } else {
+                        i--;
+                    }
+                } catch (Exception ignored) {
+                    i--;
+                }
+                //prevents one extra click on arrow (arrow that changes the photo to the next one)
+                if (i != followNumberPerHashtag - 1) {
+                    controller.findElement(By.cssSelector(nextImageArrowSelector)).click();
+                }

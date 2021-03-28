@@ -1,0 +1,3 @@
+create acc x-14 y-288
+logIn x-515 y-353
+chooseBox x-358 y-288

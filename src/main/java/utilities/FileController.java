@@ -14,8 +14,12 @@ import java.util.stream.Collectors;
 public class FileController {
     private final File file;
 
-    public FileController(String filename){
+    public FileController(String filename) {
         file = new File(filename);
+    }
+
+    public boolean isFileEmpty(){
+        return file.length() == 0;
     }
 
     public Account getAccountByName(String accountName) throws FileNotFoundException {
@@ -34,7 +38,7 @@ public class FileController {
         return accounts;
     }
 
-    public List<String> getAllData(){
+    public List<String> getAllData() {
         List<String> data = new ArrayList<>();
         Scanner myReader = null;
         try {
@@ -48,8 +52,17 @@ public class FileController {
         return data;
     }
 
-    public void putData(String data) throws IOException {
-        FileWriter fileWriter = new FileWriter(file);
+    public void writeData(String data, boolean printNewLineAfterContent, boolean overwriteFile) throws IOException {
+        FileWriter fileWriter;
+        if (overwriteFile) {
+            fileWriter = new FileWriter(file, false);
+        } else {
+            fileWriter = new FileWriter(file, true);
+        }
         fileWriter.write(data);
+        if (printNewLineAfterContent) {
+            fileWriter.write(System.getProperty("line.separator"));
+        }
+        fileWriter.close();
     }
 }
