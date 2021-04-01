@@ -40,6 +40,7 @@ public class ControllerGUI implements Initializable, Cloneable {
     public static boolean isLoggedIn = false;
     public static boolean changePhotoBtnWasClicked = false;
     public static boolean approvePhotoBtnWasClicked = false;
+    public static boolean uploadPhotoIsRunning = false;
 
     @FXML
     private AnchorPane anchorPane = new AnchorPane();
@@ -101,8 +102,8 @@ public class ControllerGUI implements Initializable, Cloneable {
 
     private void initialize_accountList() throws FileNotFoundException {
         accountList = FXCollections.observableArrayList();
-        FileController controller = new FileController(Paths.CREDENTIALS_FILE);
-        List<Account> accounts = controller.getAllAccounts();
+        FileController fileController = new FileController(Paths.CREDENTIALS_FILE);
+        List<Account> accounts = fileController.getAllAccounts();
         for (int i = 0; i < accounts.size(); i++) {
             accountList.add(accounts.get(i).getName());
         }
@@ -389,7 +390,7 @@ public class ControllerGUI implements Initializable, Cloneable {
     }
 
     @FXML
-    private void button_onAction(ActionEvent event) {
+    private void button_onAction(ActionEvent event) throws InterruptedException {
         Button b = (Button) event.getSource();
         String buttonID = b.getId();
 
@@ -426,15 +427,31 @@ public class ControllerGUI implements Initializable, Cloneable {
                 break;
 
             case "b_uploadPhoto":
-                Thread uploadPhoto = new Thread(() -> {
-                    b_uploadPhoto.setVisible(false);
-                    b_changePhoto.setVisible(true);
-                    b_approvePhoto.setVisible(true);
-                    try {
-                        functionalities.executeUploadPhoto_Auto(b_uploadPhoto, b_changePhoto, b_approvePhoto);
-                    } catch (IOException | AWTException | InterruptedException e) { e.printStackTrace(); }
-                });
-                uploadPhoto.start();
+                Runnable uploadPhoto = new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            uploadPhotoIsRunning = true;
+
+                            //wait for other functionalities to finish before executing this one
+                            Controller c = new Controller();
+                            while(c.unfollowingIsRunning || c.photoUploadIsRunning || c.hashtagFollowingIsRunning){
+                                Thread.sleep(300);
+                            }
+
+                            b_uploadPhoto.setVisible(false);
+                            b_changePhoto.setVisible(true);
+                            b_approvePhoto.setVisible(true);
+
+                            functionalities.executeUploadPhoto_Auto(b_uploadPhoto, b_changePhoto, b_approvePhoto);
+
+                            uploadPhotoIsRunning = false;
+                        } catch (IOException | AWTException | InterruptedException e) { e.printStackTrace(); }
+                    }
+                };
+                Thread uploadPhotoTH = new Thread(uploadPhoto);
+                uploadPhotoTH.start();
+                //uploadPhotoTH.join();
                 break;
 
             case "b_changePhoto":

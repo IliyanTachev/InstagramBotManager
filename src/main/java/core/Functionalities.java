@@ -35,7 +35,7 @@ public class Functionalities {
         String instagramLogoSelector = ".Igw0E.rBNOH.eGOV_.ybXk5._4EzTm";
         String photoCloseBtn = ".wpO6b";
 
-        int totalAllowedFollowActions = 4;
+        int totalAllowedFollowActions = 8;
         List<String> hashtags = Arrays.asList("followtofollow", "followtofollowback", "followtofollowers", "followtofollo");
         Controller controller = new Controller();
         JavascriptExecutor js = (JavascriptExecutor) Controller.webDriver;
@@ -70,20 +70,33 @@ public class Functionalities {
                 account.click();
                 controller.findElement(By.cssSelector("._5f5mN.jIbKX._6VtSN.yZn4P")).click();
 
-                //scroll so we can get the persons last 3 photos and like them
-                js.executeScript("window.scrollBy(0,450)", "");
-
-                //clicks on the image and likes it
-                for(int k = 0; k < 3; k++){
+                int numberOfPhotosInProfile = controller.findElements(By.cssSelector(imagesClass)).size();
+                if(numberOfPhotosInProfile > 3){
+                    numberOfPhotosInProfile = 3;
+                }
+                //clicks on the image and likes it (3 or less times)
+                for(int k = 0; k < numberOfPhotosInProfile; k++){
                     //gets the new images (from the account itself not from a hashtag)
                     imagesToClickOn = controller.findElements(By.cssSelector(imagesClass));
 
-                    imagesToClickOn.get(k).click();
-                    try{
-                        controller.findElement(By.cssSelector(".fr66n")).findElement(By.cssSelector(".wpO6b")).click();
-                    }catch (Exception ignored){
-                        js.executeScript("window.scrollBy(0,100)", "");
-                        controller.findElement(By.cssSelector(".fr66n")).findElement(By.cssSelector(".wpO6b")).click();
+                    //scroll so we can get the persons last 3 (or less) photos and like them
+                    js.executeScript("window.scrollTo(0,0)", "");
+                    while (true){
+                        try{
+                            js.executeScript("window.scrollBy(0,120)", "");
+                            imagesToClickOn.get(k).click();
+                            break;
+                        }catch (Exception ignored){}
+                    }
+
+                    //scroll so we can hit the like btn (that sometimes will not be visible at first unless we scroll)
+                    js.executeScript("window.scrollTo(0,0)", "");
+                    while (true){
+                        try{
+                            js.executeScript("window.scrollBy(0,100)", "");
+                            controller.findElement(By.cssSelector(".fr66n")).findElement(By.cssSelector(".wpO6b")).click();
+                            break;
+                        }catch (Exception ignored){}
                     }
 
                     controller.findElement(By.cssSelector(".mXkkY.HOQT4")).click();
@@ -217,18 +230,25 @@ public class Functionalities {
     }
 
     public void executeUploadPhoto_Auto(Button uploadPhotoBtn, Button rejectPhotoBtn, Button approvePhotoBtn) throws IOException, AWTException, InterruptedException {
-        List<String> accountsList = Arrays.asList("https://www.instagram.com/xiaomiuiglobal/", "https://www.instagram.com/aliartist3d/",
-                "https://www.instagram.com/ktechzone/", "https://www.instagram.com/samsung.world_/",
-                "https://www.instagram.com/smart_samsungs/", "https://www.instagram.com/ispazio/",
-                "https://www.instagram.com/with.samsung/", "https://www.instagram.com/stylo.cell/",
-                "https://www.instagram.com/note20.ultra/");
         Controller controller = new Controller();
         FileController fileController = new FileController(BANNED_PHOTOS);
         JavascriptExecutor js = (JavascriptExecutor) Controller.webDriver;
         InstagramDownloader downloader = new InstagramDownloader();
         Random random = new Random();
+        FileController fController = new FileController(ACCOUNTS_TO_GET_PHOTOS_FROM);
 
-        for (int i = 0; i < 4; i++) {
+        List<String> accountsList = fController.getAllData();
+        //IF 'ACCOUNTS_TO_GET_PHOTOS_FROM' FILE IS EMPTY 'RETURN' (TO END THE METHOD) AND ALSO PRINT ERROR MSG
+        if(accountsList.isEmpty() || (accountsList.size() == 1 && accountsList.get(0).trim().equals(""))){
+            System.out.println("Photo downloading failed. No accounts to download photos from were found!");
+            rejectPhotoBtn.setVisible(false);
+            approvePhotoBtn.setVisible(false);
+            uploadPhotoBtn.setVisible(true);
+            controller.navigateToURL("https://www.instagram.com/");
+            return;
+        }
+
+        for (int i = 0; i < 2; i++) {
             //reads file: 'bannedPhotos.txt'
             List<String> unwantedPhotos = fileController.getAllData();
 
@@ -236,7 +256,7 @@ public class Functionalities {
             String photoCaption = "";
             do {
                 //navigate to random account from 'accountsList'
-                controller.navigateToURL(accountsList.get(random.nextInt(9)));
+                controller.navigateToURL(accountsList.get(random.nextInt(accountsList.size())));
                 //scrolls down so it can get the photos otherwise it throws an exception because it can't find any photos
                 js.executeScript("window.scrollTo(0,450)", "");
 
@@ -278,11 +298,10 @@ public class Functionalities {
                 //deletes image
                 Path imagesPath = Paths.get(PHOTOS_TO_BE_CHECKED + filename);
                 Files.delete(imagesPath);
-                //we decrease i by 1 so at the end we can have 10 photos, not less
+                //we decrease i by 1 so at the end we can have the number of photos we want, not less
                 i--;
                 changePhotoBtnWasClicked = false;
             } else if (approvePhotoBtnWasClicked) {
-                //TODO: write in file (with the photo's name and its caption so we can upload it later)
                 //moves the photo from the old path to the new one and deletes the old photo
                 String oldPath = PHOTOS_TO_BE_CHECKED;
                 String newPath = PHOTOS_TO_UPLOAD;
@@ -300,5 +319,6 @@ public class Functionalities {
         rejectPhotoBtn.setVisible(false);
         approvePhotoBtn.setVisible(false);
         uploadPhotoBtn.setVisible(true);
+        controller.navigateToURL("https://www.instagram.com/");
     }
 }

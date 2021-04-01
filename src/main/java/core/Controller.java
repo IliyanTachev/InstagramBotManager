@@ -28,8 +28,10 @@ import static common.Paths.*;
 import static common.Paths.PHOTOS_TO_UPLOAD;
 
 public class Controller {
-    FileController followedProfiles = new FileController(FOLLOWED_PROFILES);
     public static WebDriver webDriver = Engine.getWebDriver();
+    public boolean unfollowingIsRunning = false;
+    public boolean photoUploadIsRunning = false;
+    public boolean hashtagFollowingIsRunning = false;
 
     Runnable unfollowing = new Runnable() {
         @Override
@@ -121,8 +123,15 @@ public class Controller {
 //                            Thread.sleep(10000);
 //                        }
 //                    }
+
+                //wait if user is verifying photos
+                while (ControllerGUI.uploadPhotoIsRunning){
+                    Thread.sleep(300);
+                }
+                unfollowingIsRunning = true;
                 System.out.println("\nUnfollow check active!");
 
+                FileController followedProfiles = new FileController(FOLLOWED_PROFILES);
                 List<String> dataFromFile = followedProfiles.getAllData();
                 List<String> tempDataFromFile = dataFromFile;
                 List<String> peopleToUnfollow;
@@ -150,23 +159,26 @@ public class Controller {
                         navigateToURL("https://www.instagram.com/");
                         //remove current line from txt file
                         String fileDataToBeWritten = "";
+                        /*
                         System.out.println("\n\n\nData in the whole file ->");
                         for (String s : tempDataFromFile) {
                             System.out.println(s);
                         }
                         System.out.println("\n\n");
+                        */
                         for (String s : tempDataFromFile) {
-                            System.out.println("Current string ->\n" + s + "\nString to be removed ->\n" + datum + "\nDoes current string equal string to be removed: " + s.equals(datum));
+                            //System.out.println("Current string ->\n" + s + "\nString to be removed ->\n" + datum + "\nDoes current string equal string to be removed: " + s.equals(datum));
                             if(!s.equals(datum)){
                                 fileDataToBeWritten += s + "\n";
                             }
                         }
-                        System.out.println("Data to be written after removal:\n-----------------------------------------------------------------------------------------\n" + fileDataToBeWritten + "\n-----------------------------------------------------------------------------------------");
+                        //System.out.println("Data to be written after removal:\n-----------------------------------------------------------------------------------------\n" + fileDataToBeWritten + "\n-----------------------------------------------------------------------------------------");
                         followedProfiles.writeData(fileDataToBeWritten, false, true);
                         tempDataFromFile = Arrays.asList(fileDataToBeWritten.split("\\r?\\n"));
                     }
                 }
                 System.out.println("Unfollow check done!\n");
+                unfollowingIsRunning = false;
                 //20min
                 //Thread.sleep(1200000);
                 //1.30min
@@ -176,7 +188,7 @@ public class Controller {
                 //2min
                 //Thread.sleep(120000);
                 //}
-            } catch (IOException e) {
+            } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
             }
         }
@@ -203,10 +215,16 @@ public class Controller {
 //                    while (!checkForUnfollowing.getState().equals("TIMED_WAITING")) {
 //                        Thread.sleep(10000);
 //                    }
+
+                //wait if user is verifying photos
+                while (ControllerGUI.uploadPhotoIsRunning){
+                    Thread.sleep(300);
+                }
+                photoUploadIsRunning = true;
                 System.out.println("\nUpload photo check active!");
 
                 FileController photosCaptions = new FileController(PHOTOS_CAPTIONS);
-                File dir = new File(PHOTOS_TO_UPLOAD);
+                File dir = new File(PHOTOS_TO_UPLOAD);                                        //////
                 List<String> fileData = photosCaptions.getAllData();
                 String stringDate = fileData.get(0);
 
@@ -215,6 +233,11 @@ public class Controller {
                 boolean sameDay = currentDate.get(Calendar.YEAR) == dateOfLastUpload.get(Calendar.YEAR)
                         && currentDate.get(Calendar.MONTH) == dateOfLastUpload.get(Calendar.MONTH)
                         && currentDate.get(Calendar.DAY_OF_MONTH) == dateOfLastUpload.get(Calendar.DAY_OF_MONTH);
+                //in case there aren't any photos available for upload (0 photos in the folder).
+                if(dir.list().length == 0){
+                    sameDay = true;
+                    System.out.println("No photos available for upload!");
+                }
 
                 if(!sameDay){
                     System.out.println("UPLOAD PHOTO ENGAGE!");
@@ -251,6 +274,7 @@ public class Controller {
                 }
 
                 System.out.println("Upload photo check done!\n");
+                photoUploadIsRunning = false;
                 //waits one hour until next check for photo upload
                 //Thread.sleep(3600000);
                 //2min
@@ -264,7 +288,15 @@ public class Controller {
         public void run() {
             Functionalities f = new Functionalities();
             try {
+                //wait if user is verifying photos
+                while (ControllerGUI.uploadPhotoIsRunning){
+                    Thread.sleep(300);
+                }
+                hashtagFollowingIsRunning = true;
+
                 f.executeFTF();
+
+                hashtagFollowingIsRunning = false;
             } catch (Exception ignored) {}
         }
     };
@@ -282,11 +314,12 @@ public class Controller {
     }
 
     public void loginToIG(String accountName) throws FileNotFoundException { // String username, String password
-        navigateToURL(Paths.SITE_URL);
-        //findElement(By.cssSelector(".sqdOP.L3NKy.y3zKF")).click();
-        wait(1);
+        try{
+            navigateToURL(Paths.SITE_URL);
+        }catch (Exception ignored){}
+        wait(1); //the wait method doesn't work i think but i don't want to mess up the code accidentally
         findElement(By.xpath("//button[text()='Log In']")).click();
-        //wait(10);
+
         FileController fileController = new FileController(Paths.CREDENTIALS_FILE);
         Account account = fileController.getAccountByName(accountName);
         WebElement usernameInput = findElement(By.cssSelector("[name=\"username\"]"));
@@ -300,6 +333,21 @@ public class Controller {
         try{
             findElement(By.xpath("//button[text()='Cancel']")).click(); // notifications decline
         } catch(Exception ignored) {}
+    }
+
+    public void logOutOfIG(String accountName) throws InterruptedException {
+        JavascriptExecutor js = (JavascriptExecutor) Controller.webDriver;
+        navigateToURL(Paths.SITE_URL + "/" + accountName);
+
+        //click the cogwheel (settings)
+        findElement(By.cssSelector(".Q46SR")).click();
+        //scroll to bottom of page
+        js.executeScript("window.scrollTo(0,document.body.scrollHeight)", "");
+        //click log out btn and confirm
+        findElement(By.xpath("//div[text()='Log Out']")).click();
+        Thread.sleep(1200);
+        findElement(By.xpath("//button[text()='Log Out']")).click();
+        Thread.sleep(5000);
     }
 
     public void unfollowListOfAccounts(List<String> accounts){
@@ -328,30 +376,42 @@ public class Controller {
         for (String account : accounts) {
             navigateToURL("https://www.instagram.com/" + account);
 
+            //if the account has less photos that the requested by the user number 'numberOfPhotosToBeDisliked'
+            //then the program dislikes as many photos as the user have, not more not less
+            if(findElements(By.cssSelector(imagesClass)).size() < numberOfPhotosToBeDisliked){
+                numberOfPhotosToBeDisliked = findElements(By.cssSelector(imagesClass)).size();
+            }
             for (int i = 0; i < numberOfPhotosToBeDisliked; i++) {
                 List<WebElement> imagesToClickOn = findElements(By.cssSelector(imagesClass));
 
-                js.executeScript("window.scrollTo(0,450)", "");
-                imagesToClickOn.get(i).click();
+                //scroll until photos are clickable
+                js.executeScript("window.scrollTo(0,0)", "");
+                while (true){
+                    try{
+                        js.executeScript("window.scrollBy(0,150)", "");
+                        imagesToClickOn.get(i).click();
+                        break;
+                    }catch (Exception ignored){}
+                }
+
+                //scroll until the like button is clickable
                 WebElement likeBtn;
-                try{
-                    likeBtn = findElement(By.cssSelector(".fr66n")).findElement(By.cssSelector(".wpO6b"));
-                    //System.out.println(likeBtn.findElement(By.cssSelector(".QBdPU")).findElement(By.tagName("span")).findElement(By.cssSelector("._8-yf5")).getAttribute("aria-label"));
-                    //findElement(By.xpath("//span[@aria-label='Unlike']")).click();
-                    if(likeBtn.findElement(By.cssSelector(".QBdPU")).findElement(By.tagName("span")).findElement(By.cssSelector("._8-yf5")).getAttribute("aria-label").equals("Unlike")){
-                        likeBtn.click();
-                    }
-                }catch (Exception ignored){
-                    js.executeScript("window.scrollBy(0,100)", "");
-                    likeBtn = findElement(By.cssSelector(".fr66n")).findElement(By.cssSelector(".wpO6b"));
-                    //findElement(By.xpath("//span[@aria-label='Unlike']")).click();
-                    if(likeBtn.findElement(By.cssSelector(".QBdPU")).findElement(By.tagName("span")).findElement(By.cssSelector("._8-yf5")).getAttribute("aria-label").equals("Unlike")){
-                        likeBtn.click();
+                js.executeScript("window.scrollTo(0,0)", "");
+                while (true){
+                    try{
+                        likeBtn = findElement(By.cssSelector(".fr66n")).findElement(By.cssSelector(".wpO6b"));
+                        if(likeBtn.findElement(By.cssSelector(".QBdPU")).findElement(By.tagName("span")).findElement(By.cssSelector("._8-yf5")).getAttribute("aria-label").equals("Unlike")){
+                            likeBtn.click();
+                        }
+                        break;
+                    }catch (Exception ignored){
+                        js.executeScript("window.scrollBy(0,100)", "");
                     }
                 }
 
                 findElement(By.cssSelector(".mXkkY.HOQT4")).click();
             }
+            numberOfPhotosToBeDisliked = 3;
         }
     }
 
@@ -409,10 +469,22 @@ public class Controller {
     }
 
     public String generatePhotoCaption(String accountName, String oldCaption){
+        FileController accountHashtagsFile = new FileController(ACCOUNT_HASHTAGS);
+        Random random = new Random();
+
+        List<String> dataFromAccountHashtagsFile = accountHashtagsFile.getAllData();
+        String dataFromAccountHashtagsFileString = "";
+        for (String s : dataFromAccountHashtagsFile) {
+            dataFromAccountHashtagsFileString += s + "\n";
+        }
+        dataFromAccountHashtagsFileString = dataFromAccountHashtagsFileString.trim();
+
+        List<String> catchphrases = Arrays.asList(dataFromAccountHashtagsFileString.split("<<<>>>")[0].split("\\^"));
+        List<String> hashtags = Arrays.asList(dataFromAccountHashtagsFileString.split("<<<>>>")[1].split("\\^"));
+
         String newCaption =
-                "Wow!! Amazing photo ❤\n" +
-                "What do you think about these phones?\n" +
-                "Credit: *\n" +
+                catchphrases.get(random.nextInt(catchphrases.size())).trim() +
+                "\nCredit: *\n" +
                 "#\n" +
                 "#\n" +
                 "#\n" +
@@ -427,7 +499,7 @@ public class Controller {
                 "#\n" +
                 "#\n" +
                 "#\n" +
-                "#samsung #samsunggalaxy #huawei #xiaomi #smartphone #phone #technology #tech #shotoniphone #oppo #iphone10 #oneplus #smartwatch #photography #mi #camera #iphonese #google #sony";
+                hashtags.get(random.nextInt(hashtags.size())).trim();
         String patternRegex = "@[A-z0-9_.]+";
         Pattern r = Pattern.compile(patternRegex);
 
@@ -513,6 +585,58 @@ public class Controller {
         }
 
         return c;
+    }
+
+    public void createAccountFiles(String accName){
+        try{
+            File accountFolder = new File(ACCOUNTS_FOLDER + accName);
+            accountFolder.mkdir();
+
+            File uploadPhotosFolder = new File(UPLOAD_PHOTOS_FOLDER);
+            uploadPhotosFolder.mkdir();
+            File peopleToUnfollowFile = new File(ACCOUNTS_FOLDER + accName + "\\peopleToUnfollow.txt");
+            peopleToUnfollowFile.createNewFile();
+
+            File imagesFolder = new File(PHOTOS_TO_UPLOAD);
+            imagesFolder.mkdir();
+            File bannedPhotosFile = new File(BANNED_PHOTOS);
+            bannedPhotosFile.createNewFile();
+            File photosCaptionsFile = new File(PHOTOS_CAPTIONS);
+            photosCaptionsFile.createNewFile();
+            File accountHashtagsFile = new File(ACCOUNT_HASHTAGS);
+            accountHashtagsFile.createNewFile();
+            File accountsToGetPhotosFromFile = new File(ACCOUNTS_TO_GET_PHOTOS_FROM);
+            accountsToGetPhotosFromFile.createNewFile();
+
+            //write current date -1 year in file: 'photosCaptions.txt'
+            // (we put last year instead of the current year so the program sees that today a photo hasn't been uploaded and uploads one)
+            Calendar cal = Calendar.getInstance();
+            cal.set(Calendar.YEAR, cal.get(Calendar.YEAR) - 1);
+            String dateToWrite = cal.getTime().toString();
+
+            FileController fc = new FileController(photosCaptionsFile.getPath());
+            fc.writeData(dateToWrite, true, true);
+
+            FileController fc1 = new FileController(accountHashtagsFile.getPath());
+            fc1.writeData("Wow!! Amazing photo ❤\nWhat do you think about it?\nFollow: @" + accName + " for more!\n"
+                    + "^\n"
+                    + "Stunning photo! ❤\nWhat do you think about it?\nFollow: @" + accName + " for more!\n"
+                    + "<<<>>>\n"
+                    + "#fashion #nature #pc #music #food #photography #tech #technology #japan #usa #animals #cats #follow #followme #photooftheday #tagforlikes #like4like #picoftheday #like\n"
+                    + "^\n"
+                    + "#love #instagood #me #tbt #cute #follow #followme #photooftheday #happy #tagforlikes #beautiful #self #girl #picoftheday #like4like #smile #friends #fun #like #fashion\n", true, true);
+        }catch (Exception ignored){}
+    }
+
+    public void changeAllPaths(String oldString, String newString){
+        FOLLOWED_PROFILES = FOLLOWED_PROFILES.replace(oldString, newString);
+        BANNED_PHOTOS = BANNED_PHOTOS.replace(oldString, newString);
+        PHOTOS_CAPTIONS = PHOTOS_CAPTIONS.replace(oldString, newString);
+        PHOTOS_TO_UPLOAD = PHOTOS_TO_UPLOAD.replace(oldString, newString);
+        PHOTOS_TO_BE_CHECKED = PHOTOS_TO_BE_CHECKED.replace(oldString, newString);
+        UPLOAD_PHOTOS_FOLDER = UPLOAD_PHOTOS_FOLDER.replace(oldString, newString);
+        ACCOUNT_HASHTAGS = ACCOUNT_HASHTAGS.replace(oldString, newString);
+        ACCOUNTS_TO_GET_PHOTOS_FROM = ACCOUNTS_TO_GET_PHOTOS_FROM.replace(oldString, newString);
     }
 
     public WebElement findElement (By selector){
